@@ -1,0 +1,65 @@
+<div class="main-container" [class.dark-mode]="darkMode">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="app-title">📝 To-Do List Application</h1>
+      <button class="btn btn-theme position-absolute end-0 me-4" (click)="toggleDarkMode()">
+        {{ darkMode ? '🌞 Light Mode' : '🌙 Dark Mode' }}
+      </button>
+    </div>
+  
+    <form #todoForm="ngForm" (ngSubmit)="onSubmit(todoForm)" class="task-form mb-4" novalidate>
+      <div class="mb-3">
+        <label class="form-label">Task</label>
+        <input
+          type="text"
+          name="task"
+          class="form-control"
+          [(ngModel)]="editedTask.taskName"
+          #task="ngModel"
+          required
+          autocomplete="off"
+        />
+        <div *ngIf="task.invalid && (task.dirty || task.touched)" class="text-danger mt-1">
+            Task name is required.
+          </div>
+      </div>
+  
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea
+          name="description"
+          class="form-control"
+          [(ngModel)]="editedTask.description"
+        ></textarea>
+      </div>
+  
+      <button type="submit" class="btn btn-primary" [disabled]="todoForm.invalid">
+        {{ editIndex !== null ? 'Update Task' : 'Add Task' }}
+      </button>
+    </form>
+  
+    <div class="kanban-board row">
+      <div class="col-md-3" *ngFor="let status of ['Planned', 'In Progress', 'Done', 'On Hold']">
+        <div class="column">
+          <h4>{{ status }}</h4>
+          <hr />
+          <div class="task-card" *ngFor="let t of getTasksByStatus(status); let i = index">
+            <h5>{{ t.taskName }}</h5>
+            <p>{{ t.description }}</p>
+  
+            <div class="actions">
+              <select [(ngModel)]="t.status" (change)="saveTasks()">
+                <option>Planned</option>
+                <option>In Progress</option>
+                <option>Done</option>
+                <option>On Hold</option>
+              </select>
+  
+              <button class="btn btn-warning" (click)="onEdit(t)">Edit</button>
+              <button class="btn btn-danger" (click)="onDelete(t)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
